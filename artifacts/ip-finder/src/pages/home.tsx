@@ -118,8 +118,8 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="flex-1 container mx-auto px-6 py-6 flex flex-col gap-6 items-center">
-        <div className="w-full max-w-5xl flex flex-col gap-5">
+      <main className="flex-1 mx-auto w-full px-16 py-10 flex flex-col gap-6 items-center">
+        <div className="w-full max-w-3xl flex flex-col gap-4">
             <h1 className="text-2xl font-bold text-foreground">What Is My IP?</h1>
 
             {error ? (
@@ -196,7 +196,7 @@ export default function Home() {
                   </div>
 
                   {/* Map panel */}
-                  <div className="border rounded-lg overflow-hidden bg-card flex flex-col" style={{ height: 400 }}>
+                  <div className="border rounded-lg overflow-hidden bg-card flex flex-col" style={{ height: 340 }}>
                     <div className="flex items-center px-4 py-2.5 border-b shrink-0">
                       <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1">
                         Open in Maps <ExternalLink className="h-3 w-3" />
