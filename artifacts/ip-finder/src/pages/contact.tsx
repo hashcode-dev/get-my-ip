@@ -41,10 +41,6 @@ export default function Contact() {
           </div>
         </div>
 
-        <div className="border rounded-lg p-5 bg-card space-y-2">
-          <h2 className="font-semibold">Frequently Asked Questions</h2>
-          <p className="text-sm text-muted-foreground">Before reaching out, you may find an answer in the FAQ section on our <Link href="/" className="text-primary hover:underline">home page</Link>.</p>
-        </div>
       </main>
 
       <footer className="border-t py-5">
