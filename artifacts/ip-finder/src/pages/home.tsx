@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Copy, RefreshCw, AlertCircle, Globe, ExternalLink, Lock, Check } from "lucide-react";
+import { Copy, RefreshCw, AlertCircle, Globe, ExternalLink, Check } from "lucide-react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -103,27 +103,6 @@ export default function Home() {
     ? `https://www.google.com/maps?q=${data.latitude},${data.longitude}`
     : "#";
 
-  const AdPlaceholder = ({
-    title,
-    className = "",
-    testId,
-    style,
-  }: {
-    title: string;
-    className?: string;
-    testId: string;
-    style?: React.CSSProperties;
-  }) => (
-    <div
-      data-testid={testId}
-      className={`bg-gray-100 border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 ${className}`}
-      style={style}
-    >
-      <span className="text-xs uppercase tracking-widest font-medium mb-1">Advertisement</span>
-      <span className="text-xs">{title}</span>
-    </div>
-  );
-
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background text-foreground font-sans">
       {/* Header */}
@@ -139,21 +118,8 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="flex-1 container mx-auto px-4 py-6 flex flex-col gap-6 items-center">
-        {/* Top Ad */}
-        <div className="w-full flex justify-center">
-          <AdPlaceholder title="728×90 (Desktop) / 320×50 (Mobile)" className="hidden md:flex" testId="ad-top" style={{ width: 728, height: 90 }} />
-          <AdPlaceholder title="320×50" className="flex md:hidden" testId="ad-top-mobile" style={{ width: 320, height: 50 }} />
-        </div>
-
-        <div className="w-full max-w-6xl grid grid-cols-1 xl:grid-cols-[300px_1fr_300px] gap-6 items-start">
-          {/* Left Ad */}
-          <div className="hidden xl:block sticky top-24">
-            <AdPlaceholder title="300×250 Rectangle" testId="ad-left" style={{ width: 300, height: 250 }} />
-          </div>
-
-          {/* Main Content */}
-          <div className="w-full flex flex-col gap-5">
+      <main className="flex-1 container mx-auto px-6 py-6 flex flex-col gap-6 items-center">
+        <div className="w-full max-w-5xl flex flex-col gap-5">
             <h1 className="text-2xl font-bold text-foreground">What Is My IP?</h1>
 
             {error ? (
@@ -171,8 +137,8 @@ export default function Home() {
               <>
                 {/* IP rows */}
                 <div className="border rounded-lg overflow-hidden divide-y divide-border bg-card">
-                  <div className="flex items-center gap-3 px-4 py-3">
-                    <span className="text-sm text-muted-foreground whitespace-nowrap shrink-0 w-36">Your IPv4 Address</span>
+                  <div className="flex items-center gap-4 px-6 py-3">
+                    <span className="text-sm text-muted-foreground whitespace-nowrap shrink-0 w-40">Your IPv4 Address</span>
                     {loading ? (
                       <Skeleton className="h-6 w-48" />
                     ) : (
@@ -186,34 +152,34 @@ export default function Home() {
                       </div>
                     )}
                   </div>
-                  <div className="flex items-center gap-3 px-4 py-3">
-                    <span className="text-sm text-muted-foreground whitespace-nowrap shrink-0 w-36">Your IPv6 Address</span>
+                  <div className="flex items-center gap-4 px-6 py-3">
+                    <span className="text-sm text-muted-foreground whitespace-nowrap shrink-0 w-40">Your IPv6 Address</span>
                     <span className="text-sm text-muted-foreground italic">IPv6: Not Detected</span>
                   </div>
                 </div>
 
                 {/* Details + Map */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
                   {/* Details panel */}
                   <div className="border rounded-lg overflow-hidden bg-card flex flex-col">
-                    <div className="flex items-center justify-between px-4 py-2.5 border-b bg-muted/40">
+                    <div className="flex items-center justify-between px-5 py-3 border-b bg-muted/40">
                       <span className="text-sm font-semibold">IPv4 Details</span>
                       <button onClick={handleCopyDetails} title="Copy all details" className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded">
                         {copiedDetails ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
                       </button>
                     </div>
 
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 border-b border-red-100">
+                    <div className="flex items-center gap-2 px-5 py-2 bg-red-50 border-b border-red-100">
                       <AlertCircle className="h-3 w-3 text-red-500 shrink-0" />
-                      <span className="text-[9px] font-bold text-red-600 uppercase tracking-wider whitespace-nowrap">Visible from your connection</span>
+                      <span className="text-[10px] font-bold text-red-600 uppercase tracking-wider whitespace-nowrap">Visible from your connection</span>
                     </div>
 
                     <div className="divide-y divide-border">
                       {loading ? (
                         Array.from({ length: 6 }).map((_, i) => (
-                          <div key={i} className="flex items-center gap-3 px-4 py-2.5">
-                            <Skeleton className="h-4 w-20 shrink-0" />
-                            <Skeleton className="h-4 w-32" />
+                          <div key={i} className="flex items-center gap-4 px-5 py-3">
+                            <Skeleton className="h-4 w-24 shrink-0" />
+                            <Skeleton className="h-4 w-36" />
                           </div>
                         ))
                       ) : (
@@ -227,18 +193,11 @@ export default function Home() {
                         </>
                       )}
                     </div>
-
-                    <div className="p-4 border-t">
-                      <button className="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold py-3 rounded-lg transition-colors">
-                        <Lock className="h-4 w-4" />
-                        Protect My Privacy with a VPN
-                      </button>
-                    </div>
                   </div>
 
                   {/* Map panel */}
                   <div className="border rounded-lg overflow-hidden bg-card flex flex-col" style={{ height: 400 }}>
-                    <div className="flex items-center justify-between px-3 py-2 border-b shrink-0">
+                    <div className="flex items-center px-4 py-2.5 border-b shrink-0">
                       <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1">
                         Open in Maps <ExternalLink className="h-3 w-3" />
                       </a>
@@ -287,18 +246,6 @@ export default function Home() {
                 </div>
               </>
             )}
-          </div>
-
-          {/* Right Ad */}
-          <div className="hidden xl:block sticky top-24">
-            <AdPlaceholder title="300×250 Rectangle" testId="ad-right" style={{ width: 300, height: 250 }} />
-          </div>
-        </div>
-
-        {/* Bottom Ad */}
-        <div className="w-full flex justify-center mt-4">
-          <AdPlaceholder title="728×90 (Desktop) / 320×50 (Mobile)" className="hidden md:flex" testId="ad-bottom" style={{ width: 728, height: 90 }} />
-          <AdPlaceholder title="320×50" className="flex md:hidden" testId="ad-bottom-mobile" style={{ width: 320, height: 50 }} />
         </div>
       </main>
 
