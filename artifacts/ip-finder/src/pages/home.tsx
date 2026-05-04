@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { Link } from "wouter";
 import { Copy, RefreshCw, AlertCircle, Globe, ExternalLink, Check } from "lucide-react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
@@ -250,8 +251,13 @@ export default function Home() {
       </main>
 
       <footer className="border-t py-5 mt-4">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} MyIPAddress. All rights reserved.
+        <div className="container mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
+          <span>&copy; {new Date().getFullYear()} MyIPAddress. All rights reserved.</span>
+          <nav className="flex items-center gap-5">
+            <Link href="/about" className="hover:text-foreground transition-colors">About Us</Link>
+            <Link href="/privacy-policy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
+            <Link href="/contact" className="hover:text-foreground transition-colors">Contact Us</Link>
+          </nav>
         </div>
       </footer>
     </div>
