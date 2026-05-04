@@ -1,9 +1,19 @@
 import { useState, useEffect, useCallback } from "react";
-import { Copy, RefreshCw, AlertCircle, Globe, MapPin, Building, Clock, Coins, Check } from "lucide-react";
+import { Copy, RefreshCw, AlertCircle, Globe, ExternalLink, Lock, Check } from "lucide-react";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
+// Fix default leaflet marker icons
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+});
 
 interface IpDetails {
   ip: string;
@@ -19,16 +29,14 @@ interface IpDetails {
   utc_offset: string;
   currency: string;
   currency_name: string;
-  languages: string;
-  calling_code: string;
-  is_eu: boolean;
 }
 
 export default function Home() {
   const [data, setData] = useState<IpDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [copiedIp, setCopiedIp] = useState(false);
+  const [copiedDetails, setCopiedDetails] = useState(false);
 
   const fetchIpData = useCallback(async () => {
     setLoading(true);
@@ -58,151 +66,243 @@ export default function Home() {
     fetchIpData();
   }, [fetchIpData]);
 
-  const handleCopy = () => {
+  const handleCopyIp = () => {
     if (data?.ip) {
       navigator.clipboard.writeText(data.ip);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setCopiedIp(true);
+      setTimeout(() => setCopiedIp(false), 2000);
     }
   };
 
-  const AdPlaceholder = ({ title, width, height, className = "", testId }: { title: string, width: string, height: string, className?: string, testId: string }) => (
-    <div 
+  const handleCopyDetails = () => {
+    if (!data) return;
+    const text = [
+      `IP: ${data.ip}`,
+      `City: ${data.city}`,
+      `State/Region: ${data.region}`,
+      `Country: ${data.country_name}`,
+      `Postal Code: ${data.postal}`,
+      `Time Zone: UTC ${formatOffset(data.utc_offset)}`,
+      `ISP: ${data.org}`,
+    ].join("\n");
+    navigator.clipboard.writeText(text);
+    setCopiedDetails(true);
+    setTimeout(() => setCopiedDetails(false), 2000);
+  };
+
+  const formatOffset = (offset: string) => {
+    if (!offset) return "";
+    const sign = offset.startsWith("-") ? "-" : "+";
+    const abs = offset.replace(/[+-]/, "");
+    const hours = abs.slice(0, 2);
+    const mins = abs.slice(2);
+    return `${sign}${hours}:${mins}`;
+  };
+
+  const mapsUrl = data
+    ? `https://www.google.com/maps?q=${data.latitude},${data.longitude}`
+    : "#";
+
+  const AdPlaceholder = ({
+    title,
+    className = "",
+    testId,
+    style,
+  }: {
+    title: string;
+    className?: string;
+    testId: string;
+    style?: React.CSSProperties;
+  }) => (
+    <div
       data-testid={testId}
-      className={`bg-gray-100 border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 p-4 ${className}`}
-      style={{ width: width === 'full' ? '100%' : width, height, maxWidth: '100%' }}
+      className={`bg-gray-100 border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 ${className}`}
+      style={style}
     >
       <span className="text-xs uppercase tracking-widest font-medium mb-1">Advertisement</span>
-      <span className="text-sm">{title}</span>
+      <span className="text-xs">{title}</span>
     </div>
   );
 
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background text-foreground font-sans">
+      {/* Header */}
       <header className="border-b bg-card/50 backdrop-blur sticky top-0 z-10">
         <div className="container mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Globe className="h-5 w-5 text-primary" />
             <span className="font-semibold tracking-tight">MyIPAddress</span>
           </div>
-          <span className="text-xs text-muted-foreground hidden sm:inline-block">Fast, focused, trustworthy</span>
+          <Button variant="ghost" size="icon" onClick={fetchIpData} data-testid="refresh-button" title="Refresh">
+            <RefreshCw className="h-4 w-4" />
+          </Button>
         </div>
       </header>
 
-      <main className="flex-1 container mx-auto px-4 py-8 flex flex-col items-center gap-8">
-        
+      <main className="flex-1 container mx-auto px-4 py-6 flex flex-col gap-6 items-center">
         {/* Top Ad */}
         <div className="w-full flex justify-center">
-          <AdPlaceholder title="728x90 (Desktop) / 320x50 (Mobile)" width="728px" height="90px" className="hidden md:flex" testId="ad-top" />
-          <AdPlaceholder title="320x50" width="320px" height="50px" className="flex md:hidden" testId="ad-top-mobile" />
+          <AdPlaceholder title="728×90 (Desktop) / 320×50 (Mobile)" className="hidden md:flex" testId="ad-top" style={{ width: 728, height: 90 }} />
+          <AdPlaceholder title="320×50" className="flex md:hidden" testId="ad-top-mobile" style={{ width: 320, height: 50 }} />
         </div>
 
-        <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[300px_1fr_300px] gap-8 items-start">
-          
-          {/* Left Ad Sidebar */}
-          <div className="hidden lg:block sticky top-24">
-            <AdPlaceholder title="300x250 Rectangle" width="300px" height="250px" testId="ad-left" />
+        <div className="w-full max-w-6xl grid grid-cols-1 xl:grid-cols-[300px_1fr_300px] gap-6 items-start">
+          {/* Left Ad */}
+          <div className="hidden xl:block sticky top-24">
+            <AdPlaceholder title="300×250 Rectangle" testId="ad-left" style={{ width: 300, height: 250 }} />
           </div>
 
           {/* Main Content */}
-          <div className="w-full flex flex-col gap-8 max-w-2xl mx-auto">
-            
-            <section className="flex flex-col items-center text-center space-y-6">
-              <h1 className="text-sm uppercase tracking-widest text-muted-foreground font-medium">Your Public IP Address</h1>
-              
-              {loading ? (
-                <Skeleton className="h-16 md:h-24 w-64 md:w-96 rounded-xl" />
-              ) : error ? (
-                <Alert variant="destructive" className="text-left w-full">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>Error</AlertTitle>
-                  <AlertDescription className="flex flex-col gap-3">
-                    {error}
-                    <Button variant="outline" size="sm" onClick={fetchIpData} className="w-fit">
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      Try Again
-                    </Button>
-                  </AlertDescription>
-                </Alert>
-              ) : (
-                <div className="flex flex-col items-center gap-4 w-full">
-                  <div 
-                    data-testid="ip-display"
-                    className="text-4xl md:text-6xl font-bold font-mono tracking-tighter text-primary break-all"
-                  >
-                    {data?.ip}
+          <div className="w-full flex flex-col gap-5">
+            <h1 className="text-2xl font-bold text-foreground">What Is My IP?</h1>
+
+            {error ? (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription className="flex flex-col gap-3">
+                  {error}
+                  <Button variant="outline" size="sm" onClick={fetchIpData} className="w-fit">
+                    <RefreshCw className="h-4 w-4 mr-2" /> Try Again
+                  </Button>
+                </AlertDescription>
+              </Alert>
+            ) : (
+              <>
+                {/* IP rows */}
+                <div className="border rounded-lg overflow-hidden divide-y divide-border bg-card">
+                  <div className="flex items-center gap-3 px-4 py-3">
+                    <span className="text-sm text-muted-foreground whitespace-nowrap shrink-0 w-36">Your IPv4 Address</span>
+                    {loading ? (
+                      <Skeleton className="h-6 w-48" />
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <span data-testid="ip-display" className="text-xl font-bold font-mono text-primary tracking-tight">
+                          {data?.ip}
+                        </span>
+                        <button onClick={handleCopyIp} data-testid="copy-button" title="Copy IP" className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded">
+                          {copiedIp ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                        </button>
+                      </div>
+                    )}
                   </div>
-                  
-                  <div className="flex items-center gap-3">
-                    <Button 
-                      variant="outline" 
-                      onClick={handleCopy} 
-                      data-testid="copy-button"
-                      className="min-w-[120px]"
-                    >
-                      {copied ? <Check className="h-4 w-4 mr-2 text-green-500" /> : <Copy className="h-4 w-4 mr-2" />}
-                      {copied ? "Copied!" : "Copy IP"}
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="icon"
-                      onClick={fetchIpData} 
-                      data-testid="refresh-button"
-                      title="Refresh"
-                    >
-                      <RefreshCw className="h-4 w-4" />
-                    </Button>
+                  <div className="flex items-center gap-3 px-4 py-3">
+                    <span className="text-sm text-muted-foreground whitespace-nowrap shrink-0 w-36">Your IPv6 Address</span>
+                    <span className="text-sm text-muted-foreground italic">IPv6: Not Detected</span>
                   </div>
                 </div>
-              )}
-            </section>
 
-            {/* Details Grid */}
-            <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <DetailCard loading={loading} icon={MapPin} label="Location" value={data ? `${data.city}, ${data.region}` : ''} testId="detail-card-location" />
-              <DetailCard loading={loading} icon={Globe} label="Country" value={data ? `${data.country_name} (${data.country_code})` : ''} testId="detail-card-country" />
-              <DetailCard loading={loading} icon={Building} label="ISP / Organization" value={data?.org || ''} testId="detail-card-isp" />
-              <DetailCard loading={loading} icon={Clock} label="Timezone" value={data ? `${data.timezone} (UTC${data.utc_offset})` : ''} testId="detail-card-timezone" nowrap />
-              <DetailCard loading={loading} icon={MapPin} label="Coordinates" value={data ? `${data.latitude}, ${data.longitude}` : ''} testId="detail-card-coordinates" />
-              <DetailCard loading={loading} icon={Coins} label="Currency" value={data ? `${data.currency_name} (${data.currency})` : ''} testId="detail-card-currency" />
-            </section>
+                {/* Details + Map */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                  {/* Details panel */}
+                  <div className="border rounded-lg overflow-hidden bg-card flex flex-col">
+                    <div className="flex items-center justify-between px-4 py-2.5 border-b bg-muted/40">
+                      <span className="text-sm font-semibold">IPv4 Details</span>
+                      <button onClick={handleCopyDetails} title="Copy all details" className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded">
+                        {copiedDetails ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                      </button>
+                    </div>
 
-            <section className="mt-8 space-y-6">
-              <h2 className="text-xl font-semibold border-b pb-2">What is my IP?</h2>
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-medium text-sm text-foreground">Why do I have an IP address?</h3>
-                  <p className="text-sm text-muted-foreground mt-1">An IP (Internet Protocol) address is a unique identifier assigned to your device when it connects to the internet. It allows devices to communicate with each other.</p>
-                </div>
-                <div>
-                  <h3 className="font-medium text-sm text-foreground">Is my IP address public?</h3>
-                  <p className="text-sm text-muted-foreground mt-1">Yes, the IP address shown above is your public IP. It is visible to the websites and services you visit. Your local network also uses private IP addresses that are not visible outside your home.</p>
-                </div>
-                <div>
-                  <h3 className="font-medium text-sm text-foreground">Can my IP address change?</h3>
-                  <p className="text-sm text-muted-foreground mt-1">Yes, most internet service providers assign dynamic IP addresses which can change periodically or when your router restarts.</p>
-                </div>
-              </div>
-            </section>
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 border-b border-red-100">
+                      <AlertCircle className="h-3 w-3 text-red-500 shrink-0" />
+                      <span className="text-[9px] font-bold text-red-600 uppercase tracking-wider whitespace-nowrap">Visible from your connection</span>
+                    </div>
 
+                    <div className="divide-y divide-border">
+                      {loading ? (
+                        Array.from({ length: 6 }).map((_, i) => (
+                          <div key={i} className="flex items-center gap-3 px-4 py-2.5">
+                            <Skeleton className="h-4 w-20 shrink-0" />
+                            <Skeleton className="h-4 w-32" />
+                          </div>
+                        ))
+                      ) : (
+                        <>
+                          <DetailRow label="City" value={data?.city} testId="detail-card-city" />
+                          <DetailRow label="State/Region" value={data?.region} testId="detail-card-region" />
+                          <DetailRow label="Country" value={data?.country_name} testId="detail-card-country" />
+                          <DetailRow label="Postal Code" value={data?.postal} testId="detail-card-postal" />
+                          <DetailRow label="Time Zone" value={data ? `UTC ${formatOffset(data.utc_offset)}` : ""} testId="detail-card-timezone" />
+                          <DetailRow label="ISP" value={data?.org} testId="detail-card-isp" />
+                        </>
+                      )}
+                    </div>
+
+                    <div className="p-4 border-t">
+                      <button className="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold py-3 rounded-lg transition-colors">
+                        <Lock className="h-4 w-4" />
+                        Protect My Privacy with a VPN
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Map panel */}
+                  <div className="border rounded-lg overflow-hidden bg-card flex flex-col" style={{ height: 400 }}>
+                    <div className="flex items-center justify-between px-3 py-2 border-b shrink-0">
+                      <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1">
+                        Open in Maps <ExternalLink className="h-3 w-3" />
+                      </a>
+                    </div>
+                    <div className="flex-1 relative">
+                      {loading ? (
+                        <Skeleton className="absolute inset-0" />
+                      ) : data ? (
+                        <MapContainer
+                          center={[data.latitude, data.longitude]}
+                          zoom={11}
+                          style={{ height: "100%", width: "100%" }}
+                          zoomControl={true}
+                          scrollWheelZoom={false}
+                        >
+                          <TileLayer
+                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                          />
+                          <Marker position={[data.latitude, data.longitude]}>
+                            <Popup>{data.city}, {data.country_name}</Popup>
+                          </Marker>
+                        </MapContainer>
+                      ) : null}
+                    </div>
+                  </div>
+                </div>
+
+                {/* FAQ */}
+                <div className="mt-2 space-y-4">
+                  <h2 className="text-lg font-semibold border-b pb-2">About Your IP Address</h2>
+                  <div className="space-y-3 text-sm text-muted-foreground">
+                    <div>
+                      <span className="font-medium text-foreground">Why do I have an IP address?</span>
+                      <p className="mt-1">An IP address is a unique identifier assigned to your device when it connects to the internet, allowing devices to communicate with each other.</p>
+                    </div>
+                    <div>
+                      <span className="font-medium text-foreground">Is my IP address public?</span>
+                      <p className="mt-1">Yes — the address shown above is your public IP, visible to websites you visit. Your local network also uses private IPs not visible outside your home.</p>
+                    </div>
+                    <div>
+                      <span className="font-medium text-foreground">Can my IP address change?</span>
+                      <p className="mt-1">Most ISPs assign dynamic IPs that can change periodically or when your router restarts.</p>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
 
-          {/* Right Ad Sidebar */}
-          <div className="hidden lg:block sticky top-24">
-            <AdPlaceholder title="300x250 Rectangle" width="300px" height="250px" testId="ad-right" />
+          {/* Right Ad */}
+          <div className="hidden xl:block sticky top-24">
+            <AdPlaceholder title="300×250 Rectangle" testId="ad-right" style={{ width: 300, height: 250 }} />
           </div>
-
         </div>
 
         {/* Bottom Ad */}
-        <div className="w-full flex justify-center mt-8">
-          <AdPlaceholder title="728x90 (Desktop) / 320x50 (Mobile)" width="728px" height="90px" className="hidden md:flex" testId="ad-bottom" />
-          <AdPlaceholder title="320x50" width="320px" height="50px" className="flex md:hidden" testId="ad-bottom-mobile" />
+        <div className="w-full flex justify-center mt-4">
+          <AdPlaceholder title="728×90 (Desktop) / 320×50 (Mobile)" className="hidden md:flex" testId="ad-bottom" style={{ width: 728, height: 90 }} />
+          <AdPlaceholder title="320×50" className="flex md:hidden" testId="ad-bottom-mobile" style={{ width: 320, height: 50 }} />
         </div>
-
       </main>
 
-      <footer className="border-t py-6 mt-8">
+      <footer className="border-t py-5 mt-4">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
           &copy; {new Date().getFullYear()} MyIPAddress. All rights reserved.
         </div>
@@ -211,22 +311,38 @@ export default function Home() {
   );
 }
 
-function DetailCard({ loading, icon: Icon, label, value, testId, nowrap }: { loading: boolean, icon: any, label: string, value: string, testId: string, nowrap?: boolean }) {
-  if (loading) {
-    return <Skeleton className="h-[88px] rounded-xl" />;
-  }
+function DetailRow({
+  label,
+  value,
+  testId,
+}: {
+  label: string;
+  value?: string;
+  testId: string;
+}) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    if (value) {
+      navigator.clipboard.writeText(value);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    }
+  };
 
   return (
-    <Card className="overflow-hidden bg-card" data-testid={testId}>
-      <CardContent className="p-4 flex items-start gap-4">
-        <div className="p-2 bg-primary/10 rounded-lg text-primary shrink-0">
-          <Icon className="h-5 w-5" />
-        </div>
-        <div className="flex flex-col gap-1 min-w-0">
-          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{label}</span>
-          <span className={`text-sm font-semibold ${nowrap ? 'truncate' : 'break-words'}`} title={nowrap ? value : undefined}>{value || '-'}</span>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="flex items-center justify-between px-4 py-2 group" data-testid={testId}>
+      <div className="flex items-start gap-2 min-w-0 flex-1">
+        <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0 w-[76px]">{label}:</span>
+        <span className="text-xs font-semibold text-foreground break-words min-w-0">{value || "-"}</span>
+      </div>
+      <button
+        onClick={handleCopy}
+        title={`Copy ${label}`}
+        className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-foreground transition-all p-1 rounded shrink-0 ml-2"
+      >
+        {copied ? <Check className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
+      </button>
+    </div>
   );
 }
