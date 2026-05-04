@@ -28,7 +28,7 @@ export default function Contact() {
             </div>
             <h2 className="font-semibold">Email</h2>
             <p className="text-sm text-muted-foreground">For general inquiries and support, drop us an email and we will get back to you within 1–2 business days.</p>
-            <a href="mailto:hello@myipaddress.com" className="text-sm text-primary hover:underline font-medium">hello@myipaddress.com</a>
+            <a href="mailto:hashcode.dev@gmail.com" className="text-sm text-primary hover:underline font-medium">hashcode.dev@gmail.com</a>
           </div>
 
           <div className="border rounded-lg p-5 flex flex-col gap-3 bg-card">
@@ -37,7 +37,7 @@ export default function Contact() {
             </div>
             <h2 className="font-semibold">Feedback</h2>
             <p className="text-sm text-muted-foreground">Spotted inaccurate data, a broken feature, or have an idea to improve the tool? We appreciate every report.</p>
-            <a href="mailto:feedback@myipaddress.com" className="text-sm text-primary hover:underline font-medium">feedback@myipaddress.com</a>
+            <a href="mailto:hashcode.dev@gmail.com" className="text-sm text-primary hover:underline font-medium">hashcode.dev@gmail.com</a>
           </div>
         </div>
 
