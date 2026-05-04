@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Copy, RefreshCw, AlertCircle, Globe, MapPin, Building, Clock, Languages, Coins, Phone, Check } from "lucide-react";
+import { Copy, RefreshCw, AlertCircle, Globe, MapPin, Building, Clock, Coins, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -165,8 +165,6 @@ export default function Home() {
               <DetailCard loading={loading} icon={Clock} label="Timezone" value={data ? `${data.timezone} (UTC ${data.utc_offset})` : ''} testId="detail-card-timezone" />
               <DetailCard loading={loading} icon={MapPin} label="Coordinates" value={data ? `${data.latitude}, ${data.longitude}` : ''} testId="detail-card-coordinates" />
               <DetailCard loading={loading} icon={Coins} label="Currency" value={data ? `${data.currency_name} (${data.currency})` : ''} testId="detail-card-currency" />
-              <DetailCard loading={loading} icon={Languages} label="Languages" value={data?.languages || ''} testId="detail-card-languages" />
-              <DetailCard loading={loading} icon={Phone} label="Calling Code" value={data?.calling_code || ''} testId="detail-card-callingcode" />
             </section>
 
             <section className="mt-8 space-y-6">
