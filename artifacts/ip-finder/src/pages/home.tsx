@@ -224,9 +224,9 @@ function DetailCard({ loading, icon: Icon, label, value, testId }: { loading: bo
         <div className="p-2 bg-primary/10 rounded-lg text-primary">
           <Icon className="h-5 w-5" />
         </div>
-        <div className="flex flex-col gap-1 overflow-hidden">
+        <div className="flex flex-col gap-1 min-w-0">
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{label}</span>
-          <span className="text-sm font-semibold truncate" title={value}>{value || '-'}</span>
+          <span className="text-sm font-semibold break-words">{value || '-'}</span>
         </div>
       </CardContent>
     </Card>
