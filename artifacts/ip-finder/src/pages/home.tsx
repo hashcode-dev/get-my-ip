@@ -245,6 +245,32 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
+
+                {/* Understanding Your IP Address */}
+                <div className="mt-6 space-y-4">
+                  <h2 className="text-lg font-semibold border-b pb-2">💡 Understanding Your IP Address</h2>
+                  <p className="text-sm text-muted-foreground">An IP address (Internet Protocol address) is a unique identifier assigned to your internet connection that allows websites and apps to send information back to you. The address shown at the top of this page is your public IP address, assigned by your Internet Service Provider (ISP). A public IP identifies your network on the internet, while a private IP address is used only within a local network, such as your home or office. In most cases, a public IP address identifies an entire network rather than a single device connected to it.</p>
+                </div>
+
+                {/* Why Your IP Changes */}
+                <div className="mt-6 space-y-4">
+                  <h2 className="text-lg font-semibold border-b pb-2">🔄 Why Your IP Changes</h2>
+                  <p className="text-sm text-muted-foreground">Most internet users are assigned a dynamic IP address. This means your IP can change over time rather than remaining permanently fixed. Static IP addresses are available from some Internet Service Providers (ISPs), but they are less common for residential connections.</p>
+                  <div className="space-y-3 text-sm text-muted-foreground">
+                    <div>
+                      <span className="font-medium text-foreground">Will my IP stay the same?</span>
+                      <p className="mt-1">In most cases, no. Residential internet connections typically use dynamic IP addressing, which allows the ISP to rotate or reassign IP addresses as needed.</p>
+                    </div>
+                    <div>
+                      <span className="font-medium text-foreground">Why does my IP change?</span>
+                      <p className="mt-1">Your IP address may change when you restart your modem or router, when your ISP refreshes its network assignments, or when you connect to a different network such as Wi-Fi at another location.</p>
+                    </div>
+                    <div>
+                      <span className="font-medium text-foreground">Why does my IP change on mobile?</span>
+                      <p className="mt-1">Mobile devices frequently switch between cellular towers, Wi-Fi networks, and carrier routing systems. Each network assigns its own public IP address, which can cause your visible IP to change more often.</p>
+                    </div>
+                  </div>
+                </div>
               </>
             )}
         </div>
