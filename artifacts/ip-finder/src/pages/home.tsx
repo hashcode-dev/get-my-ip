@@ -162,7 +162,7 @@ export default function Home() {
               <DetailCard loading={loading} icon={MapPin} label="Location" value={data ? `${data.city}, ${data.region}` : ''} testId="detail-card-location" />
               <DetailCard loading={loading} icon={Globe} label="Country" value={data ? `${data.country_name} (${data.country_code})` : ''} testId="detail-card-country" />
               <DetailCard loading={loading} icon={Building} label="ISP / Organization" value={data?.org || ''} testId="detail-card-isp" />
-              <DetailCard loading={loading} icon={Clock} label="Timezone" value={data ? `${data.timezone} (UTC ${data.utc_offset})` : ''} testId="detail-card-timezone" />
+              <DetailCard loading={loading} icon={Clock} label="Timezone" value={data ? `${data.timezone} (UTC${data.utc_offset})` : ''} testId="detail-card-timezone" nowrap />
               <DetailCard loading={loading} icon={MapPin} label="Coordinates" value={data ? `${data.latitude}, ${data.longitude}` : ''} testId="detail-card-coordinates" />
               <DetailCard loading={loading} icon={Coins} label="Currency" value={data ? `${data.currency_name} (${data.currency})` : ''} testId="detail-card-currency" />
             </section>
@@ -211,7 +211,7 @@ export default function Home() {
   );
 }
 
-function DetailCard({ loading, icon: Icon, label, value, testId }: { loading: boolean, icon: any, label: string, value: string, testId: string }) {
+function DetailCard({ loading, icon: Icon, label, value, testId, nowrap }: { loading: boolean, icon: any, label: string, value: string, testId: string, nowrap?: boolean }) {
   if (loading) {
     return <Skeleton className="h-[88px] rounded-xl" />;
   }
@@ -219,12 +219,12 @@ function DetailCard({ loading, icon: Icon, label, value, testId }: { loading: bo
   return (
     <Card className="overflow-hidden bg-card" data-testid={testId}>
       <CardContent className="p-4 flex items-start gap-4">
-        <div className="p-2 bg-primary/10 rounded-lg text-primary">
+        <div className="p-2 bg-primary/10 rounded-lg text-primary shrink-0">
           <Icon className="h-5 w-5" />
         </div>
         <div className="flex flex-col gap-1 min-w-0">
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{label}</span>
-          <span className="text-sm font-semibold break-words">{value || '-'}</span>
+          <span className={`text-sm font-semibold ${nowrap ? 'truncate' : 'break-words'}`} title={nowrap ? value : undefined}>{value || '-'}</span>
         </div>
       </CardContent>
     </Card>
