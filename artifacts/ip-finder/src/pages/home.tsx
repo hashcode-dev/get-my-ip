@@ -111,7 +111,7 @@ export default function Home() {
         <div className="container mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Globe className="h-5 w-5 text-primary" />
-            <span className="font-semibold tracking-tight">MyIPAddress</span>
+            <span className="font-semibold tracking-tight">Get My IP</span>
           </div>
           <Button variant="ghost" size="icon" onClick={fetchIpData} data-testid="refresh-button" title="Refresh">
             <RefreshCw className="h-4 w-4" />
@@ -252,7 +252,7 @@ export default function Home() {
 
       <footer className="border-t py-5 mt-4">
         <div className="container mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
-          <span>&copy; {new Date().getFullYear()} MyIPAddress. All rights reserved.</span>
+          <span>&copy; {new Date().getFullYear()} Get My IP. All rights reserved.</span>
           <nav className="flex items-center gap-5">
             <Link href="/about" className="hover:text-foreground transition-colors">About Us</Link>
             <Link href="/privacy-policy" className="hover:text-foreground transition-colors">Privacy Policy</Link>

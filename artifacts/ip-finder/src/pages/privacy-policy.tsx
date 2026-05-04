@@ -8,7 +8,7 @@ export default function PrivacyPolicy() {
         <div className="container mx-auto px-4 h-14 flex items-center">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <Globe className="h-5 w-5 text-primary" />
-            <span className="font-semibold tracking-tight">MyIPAddress</span>
+            <span className="font-semibold tracking-tight">Get My IP</span>
           </Link>
         </div>
       </header>
@@ -20,7 +20,7 @@ export default function PrivacyPolicy() {
         <section className="space-y-3">
           <h2 className="text-lg font-semibold">Information We Collect</h2>
           <p className="text-muted-foreground leading-relaxed">
-            When you visit MyIPAddress, your IP address is automatically used to retrieve geolocation and network information via third-party IP lookup APIs. We do not store your IP address on our servers. The lookup is performed in real time and the result is displayed only to you.
+            When you visit Get My IP, your IP address is automatically used to retrieve geolocation and network information via third-party IP lookup APIs. We do not store your IP address on our servers. The lookup is performed in real time and the result is displayed only to you.
           </p>
         </section>
 
@@ -41,7 +41,7 @@ export default function PrivacyPolicy() {
         <section className="space-y-3">
           <h2 className="text-lg font-semibold">Data Retention</h2>
           <p className="text-muted-foreground leading-relaxed">
-            MyIPAddress does not maintain a database of user IP addresses or browsing history. All IP lookups are ephemeral and discarded after the response is returned to your browser.
+            Get My IP does not maintain a database of user IP addresses or browsing history. All IP lookups are ephemeral and discarded after the response is returned to your browser.
           </p>
         </section>
 
@@ -62,7 +62,7 @@ export default function PrivacyPolicy() {
 
       <footer className="border-t py-5">
         <div className="container mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
-          <span>&copy; {new Date().getFullYear()} MyIPAddress. All rights reserved.</span>
+          <span>&copy; {new Date().getFullYear()} Get My IP. All rights reserved.</span>
           <nav className="flex items-center gap-5">
             <Link href="/about" className="hover:text-foreground transition-colors">About Us</Link>
             <Link href="/privacy-policy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
