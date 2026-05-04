@@ -118,7 +118,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="flex-1 mx-auto w-full px-16 pt-28 pb-10 flex flex-col gap-6 items-center">
+      <main className="flex-1 mx-auto w-full px-16 pt-28 pb-28 flex flex-col gap-6 items-center">
         <div className="w-full max-w-3xl flex flex-col gap-4">
             <h1 className="text-2xl font-bold text-foreground">What Is My IP?</h1>
 
