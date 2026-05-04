@@ -64,6 +64,7 @@ export default function PrivacyPolicy() {
         <div className="container mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
           <span>&copy; {new Date().getFullYear()} Get My IP. All rights reserved.</span>
           <nav className="flex items-center gap-5">
+            <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
             <Link href="/about" className="hover:text-foreground transition-colors">About Us</Link>
             <Link href="/privacy-policy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
             <Link href="/contact" className="hover:text-foreground transition-colors">Contact Us</Link>
