@@ -1,17 +1,10 @@
-import { Globe, Mail, MessageSquare } from "lucide-react";
-import { Link } from "wouter";
+import { Mail, MessageSquare } from "lucide-react";
+import NavHeader from "@/components/NavHeader";
 
 export default function Contact() {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background text-foreground font-sans">
-      <header className="border-b bg-card/50 backdrop-blur sticky top-0 z-10">
-        <div className="container mx-auto px-4 h-14 flex items-center">
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <Globe className="h-5 w-5 text-primary" />
-            <span className="font-semibold tracking-tight">Get My IP</span>
-          </Link>
-        </div>
-      </header>
+      <NavHeader />
 
       <main className="flex-1 mx-auto w-full max-w-2xl px-6 py-12 flex flex-col gap-8">
         <div>
@@ -40,18 +33,11 @@ export default function Contact() {
             <a href="mailto:hashcode.dev@gmail.com" className="text-sm text-primary hover:underline font-medium">hashcode.dev@gmail.com</a>
           </div>
         </div>
-
       </main>
 
       <footer className="border-t py-5">
-        <div className="container mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
-          <span>&copy; {new Date().getFullYear()} Get My IP. All rights reserved.</span>
-          <nav className="flex items-center gap-5">
-            <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
-            <Link href="/about" className="hover:text-foreground transition-colors">About Us</Link>
-            <Link href="/privacy-policy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
-            <Link href="/contact" className="hover:text-foreground transition-colors">Contact Us</Link>
-          </nav>
+        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+          &copy; {new Date().getFullYear()} Get My IP. All rights reserved.
         </div>
       </footer>
     </div>

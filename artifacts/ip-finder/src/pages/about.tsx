@@ -1,17 +1,11 @@
-import { Globe } from "lucide-react";
-import { Link } from "wouter";
+import NavHeader from "@/components/NavHeader";
+
+const base = import.meta.env.BASE_URL;
 
 export default function About() {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background text-foreground font-sans">
-      <header className="border-b bg-card/50 backdrop-blur sticky top-0 z-10">
-        <div className="container mx-auto px-4 h-14 flex items-center">
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <Globe className="h-5 w-5 text-primary" />
-            <span className="font-semibold tracking-tight">Get My IP</span>
-          </Link>
-        </div>
-      </header>
+      <NavHeader />
 
       <main className="flex-1 mx-auto w-full max-w-2xl px-6 py-12 flex flex-col gap-6">
         <h1 className="text-3xl font-bold">About Us</h1>
@@ -25,19 +19,13 @@ export default function About() {
           Our data is sourced from publicly available IP geolocation databases and updated regularly to ensure accuracy. While we strive for precision, geolocation data may occasionally differ from your exact physical location due to how ISPs route traffic.
         </p>
         <p className="text-muted-foreground leading-relaxed">
-          Thank you for using Get My IP. If you have feedback or suggestions, feel free to reach out via our <Link href="/contact" className="text-primary hover:underline">Contact page</Link>.
+          Thank you for using Get My IP. If you have feedback or suggestions, feel free to reach out via our <a href={`${base}contact/`} className="text-primary hover:underline">Contact page</a>.
         </p>
       </main>
 
       <footer className="border-t py-5">
-        <div className="container mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
-          <span>&copy; {new Date().getFullYear()} Get My IP. All rights reserved.</span>
-          <nav className="flex items-center gap-5">
-            <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
-            <Link href="/about" className="hover:text-foreground transition-colors">About Us</Link>
-            <Link href="/privacy-policy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
-            <Link href="/contact" className="hover:text-foreground transition-colors">Contact Us</Link>
-          </nav>
+        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+          &copy; {new Date().getFullYear()} Get My IP. All rights reserved.
         </div>
       </footer>
     </div>

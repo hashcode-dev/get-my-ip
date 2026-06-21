@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { Link } from "wouter";
-import { Copy, RefreshCw, AlertCircle, Globe, ExternalLink, Check } from "lucide-react";
+import { Copy, AlertCircle, ExternalLink, Check } from "lucide-react";
+import NavHeader from "@/components/NavHeader";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -106,18 +106,7 @@ export default function Home() {
 
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background text-foreground font-sans">
-      {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur sticky top-0 z-10">
-        <div className="container mx-auto px-4 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Globe className="h-5 w-5 text-primary" />
-            <span className="font-semibold tracking-tight">Get My IP</span>
-          </div>
-          <Button variant="ghost" size="icon" onClick={fetchIpData} data-testid="refresh-button" title="Refresh">
-            <RefreshCw className="h-4 w-4" />
-          </Button>
-        </div>
-      </header>
+      <NavHeader onRefresh={fetchIpData} />
 
       <main className="flex-1 mx-auto w-full px-16 pt-28 pb-28 flex flex-col gap-6 items-center">
         <div className="w-full max-w-3xl flex flex-col gap-4">
@@ -277,14 +266,8 @@ export default function Home() {
       </main>
 
       <footer className="border-t py-5 mt-4">
-        <div className="container mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
-          <span>&copy; {new Date().getFullYear()} Get My IP. All rights reserved.</span>
-          <nav className="flex items-center gap-5">
-            <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
-            <Link href="/about" className="hover:text-foreground transition-colors">About Us</Link>
-            <Link href="/privacy-policy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
-            <Link href="/contact" className="hover:text-foreground transition-colors">Contact Us</Link>
-          </nav>
+        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+          &copy; {new Date().getFullYear()} Get My IP. All rights reserved.
         </div>
       </footer>
     </div>
