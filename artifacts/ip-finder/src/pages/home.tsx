@@ -43,19 +43,51 @@ export default function Home() {
     setLoading(true);
     setError(null);
     try {
-      const ipRes = await fetch("https://api.ipify.org?format=json");
-      if (!ipRes.ok) throw new Error("Failed to fetch IP address");
-      const { ip } = await ipRes.json();
+      const res = await fetch("https://ipinfo.io/json");
+      if (!res.ok) throw new Error("Failed to fetch IP data");
+      const raw = await res.json();
 
-      const detailsRes = await fetch(`https://ipapi.co/${ip}/json/`);
-      if (!detailsRes.ok) throw new Error("Failed to fetch IP details");
-      const details = await detailsRes.json();
+      // ipinfo.io returns loc as "lat,lng"
+      const [lat, lng] = (raw.loc ?? "0,0").split(",").map(Number);
 
-      if (details.error) {
-        throw new Error(details.reason || "Failed to fetch IP details");
-      }
+      // Derive UTC offset from IANA timezone using Intl API
+      const getUtcOffset = (tz: string) => {
+        try {
+          const parts = new Intl.DateTimeFormat("en", {
+            timeZone: tz,
+            timeZoneName: "longOffset",
+          }).formatToParts(new Date());
+          const tzName = parts.find((p) => p.type === "timeZoneName")?.value ?? "";
+          return tzName.replace("GMT", "") || "+00:00";
+        } catch {
+          return "";
+        }
+      };
 
-      setData(details);
+      // ipinfo.io returns country code only; use Intl.DisplayNames for full name
+      const countryName =
+        new Intl.DisplayNames(["en"], { type: "region" }).of(raw.country ?? "") ??
+        raw.country ??
+        "";
+
+      // Strip leading "AS##### " from org field to get ISP name
+      const isp = (raw.org ?? "").replace(/^AS\d+\s+/, "");
+
+      setData({
+        ip: raw.ip ?? "",
+        city: raw.city ?? "",
+        region: raw.region ?? "",
+        country_name: countryName,
+        country_code: raw.country ?? "",
+        postal: raw.postal ?? "",
+        latitude: lat,
+        longitude: lng,
+        org: isp,
+        timezone: raw.timezone ?? "",
+        utc_offset: getUtcOffset(raw.timezone ?? ""),
+        currency: "",
+        currency_name: "",
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "An unexpected error occurred");
     } finally {
@@ -93,11 +125,8 @@ export default function Home() {
 
   const formatOffset = (offset: string) => {
     if (!offset) return "";
-    const sign = offset.startsWith("-") ? "-" : "+";
-    const abs = offset.replace(/[+-]/, "");
-    const hours = abs.slice(0, 2);
-    const mins = abs.slice(2);
-    return `${sign}${hours}:${mins}`;
+    // ipwho.is already returns formatted offset e.g. "+05:30"
+    return offset;
   };
 
   const mapsUrl = data
